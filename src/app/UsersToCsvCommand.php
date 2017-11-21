@@ -163,6 +163,11 @@ class UsersToCsvCommand extends Command
         $inQuery  = $input->getArgument('input');
         $outfile = $input->getArgument('output');
 
+        $file_parts = pathinfo($outfile);
+        if ($file_parts["extension"] != "csv") {
+            throw new \Exception("Filename extension is not correct etc. users.csv");
+        }
+
         $safeResponse = '';
         if (!$this->isSafeQuery($inQuery, $safeResponse)) {
             throw new \Exception($safeResponse);

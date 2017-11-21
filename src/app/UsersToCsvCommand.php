@@ -35,34 +35,30 @@ class UsersToCsvCommand extends Command
         $response = '';
         $temp= explode(' ', strtoupper($query));
 
-        if(!count(array_intersect(['USERS'], $temp)) > 0)
-        {
+        if (!count(array_intersect(['USERS'], $temp)) > 0) {
             $response = 'query does not contain [from users] statement';
             return false;
         }
 
-        if(!count(array_intersect(['SELECT'], $temp)) > 0)
-        {
+        if (!count(array_intersect(['SELECT'], $temp)) > 0) {
             $response = 'query does not contain [select bla bla] statement';
             return false;
         }
 
         //all other sql
-        if(count(array_intersect($this->notAllowedCommands, $temp)) > 0)
-        {
-            $response = "Query contains bad statements [".implode(",",$this->notAllowedCommands)."]!";
+        if (count(array_intersect($this->notAllowedCommands, $temp)) > 0) {
+            $response = "Query contains bad statements [".implode(",", $this->notAllowedCommands)."]!";
             return false;
-        }
-        else
-        {
+        } else {
             return true;
         }
     }
 
     public function writeToCsv($filename, $data, $exception = false)
     {
-        if (count($data) === 0)
+        if (count($data) === 0) {
             return false;
+        }
 
         if (!ini_get("auto_detect_line_endings")) {
             ini_set("auto_detect_line_endings", '1');
@@ -76,20 +72,19 @@ class UsersToCsvCommand extends Command
             //$csv->insertOne(['firstname', 'lastname', 'email']);
 
             //test exception
-            if ($exception)
-              $i = 6/0;
+            if ($exception) {
+                $i = 6/0;
+            }
 
             // insert data into the CSV
             $csv->insertAll($data);
 
             return true;
-        }
-        catch(\Exception $e)
-        {
-
+        } catch (\Exception $e) {
             //clean up
-            if (file_exists($filename))
+            if (file_exists($filename)) {
                 unlink($filename);
+            }
 
             throw $e;
         }
@@ -110,13 +105,11 @@ class UsersToCsvCommand extends Command
         $outfile = $input->getArgument('output');
 
         $safeResponse = '';
-        if(!$this->isSafeQuery($inQuery, $safeResponse))
-        {
+        if (!$this->isSafeQuery($inQuery, $safeResponse)) {
             throw new \Exception($safeResponse);
         }
 
-        if (file_exists($outfile))
-        {
+        if (file_exists($outfile)) {
             unlink($outfile);
         }
 
@@ -127,22 +120,15 @@ class UsersToCsvCommand extends Command
 
             // Verify that uniq "id" column is included, this is not done in isSafeQuery in case of join and more complex query
             // What is expected to be a complete dump?
-            if ( (count($rows) > 0) && !array_key_exists("id", $rows[0]))
+            if ((count($rows) > 0) && !array_key_exists("id", $rows[0])) {
                 throw new \Exception("Column \"id\" must be selected in query.");
+            }
 
-            if ($this->writeToCsv($outfile, $rows))
-            {
-
+            if ($this->writeToCsv($outfile, $rows)) {
             }
             //    $this->delete_data($conn, $rows);
-
         } finally {
             $conn->close();
         }
-
-
-
     }
 }
-
-?>

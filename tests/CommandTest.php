@@ -35,6 +35,8 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 
     public function testWriteToCsv()
     {
+        $file = 'unittest.csv';
+
         $data = [
             ['id' => '1']
         ];
@@ -44,7 +46,7 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 
         try
         {
-           $result = $this->command->writeToCsv('unittest.csv', $data, true);
+           $result = $this->command->writeToCsv($file, $data, true);
         }
         catch(\Exception $e)
         {

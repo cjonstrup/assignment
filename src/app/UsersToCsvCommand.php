@@ -4,6 +4,7 @@ use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\DriverManager;
 use League\Csv\Reader;
 use League\Csv\Writer;
+use PDO;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -19,6 +20,29 @@ class UsersToCsvCommand extends Command
                                 'USE'
                                 ];
 
+    /**
+     * @param $file
+     * @return int
+     */
+    public function linesInFile($file)
+    {
+
+        $linecount = 0;
+
+        $handle = fopen($file, "r");
+        while (!feof($handle)) {
+            $line = fgets($handle);
+            $linecount++;
+        }
+
+        fclose($handle);
+
+        return $linecount;
+    }
+
+    /**
+     * @return \Doctrine\DBAL\Connection
+     */
     private function createConnection()
     {
         $conf = new Configuration();
@@ -30,6 +54,11 @@ class UsersToCsvCommand extends Command
         return $conn;
     }
 
+    /**
+     * @param $query
+     * @param $response
+     * @return bool
+     */
     public function isSafeQuery($query, &$response)
     {
         $response = '';
@@ -54,6 +83,13 @@ class UsersToCsvCommand extends Command
         }
     }
 
+    /**
+     * @param $filename
+     * @param $data
+     * @param bool $exception
+     * @return bool
+     * @throws \Exception
+     */
     public function writeToCsv($filename, $data, $exception = false)
     {
         if (count($data) === 0) {
@@ -87,6 +123,28 @@ class UsersToCsvCommand extends Command
                 unlink($filename);
             }
 
+            throw $e;
+        }
+    }
+
+    /**
+     * @param $conn
+     * @param $data
+     * @throws \Exception
+     */
+    public function deleteData($conn, $data)
+    {
+        $conn->beginTransaction();
+        try {
+            $stmt = $conn->prepare("delete from users where id = :id");
+            foreach ($data as $row) {
+                $stmt->bindParam(':id', $row["id"], PDO::PARAM_STR);
+                $stmt->execute();
+            }
+            $conn->commit();
+        } catch (\Exception $e) {
+            // Something went wrong rollback
+            $conn->rollback();
             throw $e;
         }
     }
@@ -126,8 +184,8 @@ class UsersToCsvCommand extends Command
             }
 
             if ($this->writeToCsv($outfile, $rows)) {
+                $this->deleteData($conn, $rows);
             }
-            //    $this->delete_data($conn, $rows);
         } finally {
             $conn->close();
         }

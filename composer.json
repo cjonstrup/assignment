@@ -1,0 +1,32 @@
+{
+  "name": "interview-assignment",
+  "type": "project",
+  "authors": [
+    {
+      "name": "Carsten Jonstrup",
+      "email": "carsten@lenius.dk"
+    }
+  ],
+  "require": {
+    "symfony/console": "^3.3",
+    "doctrine/dbal": "^2.5",
+    "league/csv": "^9.1"
+  },
+  "require-dev": {
+    "php": ">=5.5.0",
+    "phpunit/phpunit": "4.8.*@dev",
+    "squizlabs/php_codesniffer": "2.*",
+    "satooshi/php-coveralls": "dev-master"
+  },
+  "autoload": {
+    "psr-4": {
+      "": "src"
+    }
+  },
+  "scripts": {
+    "post-autoload-dump": [
+      "rm -f app.db",
+      "cat sqldump.sql | sqlite3 app.db"
+    ]
+  }
+}

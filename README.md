@@ -1,5 +1,5 @@
 ## Job interview assignment
-The following describes how to run and use the solution for CEGO job interview assignment.
+The following describes how to run and use the solution for interview assignment.
 
 ### Getting started
 Before cloning the repository make sure the following dependencies are installed.

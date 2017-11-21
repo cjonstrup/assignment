@@ -67,9 +67,10 @@ class UsersToCsvCommand extends Command
         try {
             $csv = Writer::createFromPath($filename, "w");
             $csv->setOutputBOM(Reader::BOM_UTF8);
+            $csv->setDelimiter(';');
 
-            //CSV header (to be user later)
-            //$csv->insertOne(['firstname', 'lastname', 'email']);
+            //CSV
+            $csv->insertOne(array_keys($data[0]));
 
             //test exception
             if ($exception) {

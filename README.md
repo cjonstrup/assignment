@@ -33,7 +33,7 @@ Run the unit tests to verify the system is working
 Run the app and the test command for yourself
 
 ```
-php app user 'select * from users limit 10' users.csv
+php app users 'select * from users limit 10' users.csv
 ```
 
 ### How it works

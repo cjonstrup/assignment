@@ -56,8 +56,13 @@ class CommandTest extends TestCase
             $exception = $e->getMessage();
         }
 
-        //test with correct format
+        //test that response is false
         $this->assertFalse($result);
+
+        //check that writeToCsv clean up
+        $this->assertFalse(file_exists($file));
+
+        //Check expected exception
         $this->assertEquals('Division by zero', $exception);
     }
 }

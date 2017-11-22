@@ -26,8 +26,8 @@
   },
   "scripts": {
     "post-autoload-dump": [
-      "rm -f app.db",
-      "cat sqldump.sql | sqlite3 app.db"
+      "php -r \"@unlink('app.db');\"",
+      "php -r \"echo file_get_contents('sqldump.sql');\" | sqlite3 app.db"
     ]
   }
 }

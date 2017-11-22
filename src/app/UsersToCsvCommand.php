@@ -127,8 +127,10 @@ class UsersToCsvCommand extends Command
             return true;
         } catch (\Exception $e) {
             //clean up
+            $csv->__destruct();
+
             if (file_exists($filename)) {
-                unlink($filename);
+                @unlink($filename);
             }
 
             throw $e;

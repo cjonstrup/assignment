@@ -19,6 +19,7 @@ class UsersToCsvCommand extends Command
                                 'TRUNCATE',
                                 'DROP',
                                 'USE',
+                                'UPDATE',
                                 ];
 
     /**

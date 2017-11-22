@@ -1,8 +1,11 @@
 <?php
 
-use App\UsersToCsvCommand;
+namespace Tests;
 
-class CommandTest extends \PHPUnit_Framework_TestCase
+use App\UsersToCsvCommand;
+use PHPUnit\Framework\TestCase;
+
+class CommandTest extends TestCase
 {
     private $command;
 
@@ -31,6 +34,9 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 
         //test with wrong sql word
         $this->assertFalse($this->command->isSafeQuery('drop table users', $safeResponse));
+
+        //test with wrong sql word
+        $this->assertFalse($this->command->isSafeQuery('update users set id = \'1\'', $safeResponse));
     }
 
     public function testWriteToCsv()

@@ -1,6 +1,6 @@
 ## Job interview assignment
 
-[![Build Status](https://travis-ci.org/cjonstrup/assignment.svg)](https://travis-ci.org/cjonstrup/assignment) [![StyleCI](https://styleci.io/repos/111607834/shield)](https://styleci.io/repos/111607834)
+[![Build Status](https://travis-ci.org/cjonstrup/assignment.svg)](https://travis-ci.org/cjonstrup/assignment) [![StyleCI](https://styleci.io/repos/111607834/shield)](https://styleci.io/repos/111607834) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/cjonstrup/assignment/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/cjonstrup/assignment/?branch=master)
 
 The following describes how to run and use the solution for interview assignment.
 

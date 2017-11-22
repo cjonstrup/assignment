@@ -1,4 +1,7 @@
 ## Job interview assignment
+
+[![Build Status](https://travis-ci.org/cjonstrup/assignment.svg)](https://travis-ci.org/cjonstrup/assignment)
+
 The following describes how to run and use the solution for interview assignment.
 
 ### Getting started

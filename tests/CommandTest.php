@@ -18,7 +18,7 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 
     public function testSafeQuery()
     {
-        $safeResponse = "";
+        $safeResponse = '';
 
         //test with correct format
         $this->assertTrue($this->command->isSafeQuery('select * from users', $safeResponse));
@@ -38,25 +38,20 @@ class CommandTest extends \PHPUnit_Framework_TestCase
         $file = 'unittest.csv';
 
         $data = [
-            ['id' => '1']
+            ['id' => '1'],
         ];
 
-        $exception = "";
+        $exception = '';
         $result = false;
 
-        try
-        {
-           $result = $this->command->writeToCsv($file, $data, true);
-        }
-        catch(\Exception $e)
-        {
+        try {
+            $result = $this->command->writeToCsv($file, $data, true);
+        } catch (\Exception $e) {
             $exception = $e->getMessage();
         }
 
         //test with correct format
         $this->assertFalse($result);
-        $this->assertEquals("Division by zero", $exception);
-
+        $this->assertEquals('Division by zero', $exception);
     }
-
 }

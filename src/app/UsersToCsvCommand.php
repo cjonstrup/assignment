@@ -1,4 +1,6 @@
-<?php  namespace App;
+<?php
+
+namespace App;
 
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\DriverManager;
@@ -12,24 +14,23 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class UsersToCsvCommand extends Command
 {
-
     private $notAllowedCommands = [
                                 'DELETE',
                                 'TRUNCATE',
                                 'DROP',
-                                'USE'
+                                'USE',
                                 ];
 
     /**
      * @param $file
+     *
      * @return int
      */
     public function linesInFile($file)
     {
-
         $linecount = 0;
 
-        $handle = fopen($file, "r");
+        $handle = fopen($file, 'r');
         while (!feof($handle)) {
             $line = fgets($handle);
             $linecount++;
@@ -47,8 +48,8 @@ class UsersToCsvCommand extends Command
     {
         $conf = new Configuration();
         $conn = DriverManager::getConnection([
-            "path" => "app.db",
-            "driver" => "pdo_sqlite"
+            'path'   => 'app.db',
+            'driver' => 'pdo_sqlite',
         ], $conf);
 
         return $conn;
@@ -57,26 +58,30 @@ class UsersToCsvCommand extends Command
     /**
      * @param $query
      * @param $response
+     *
      * @return bool
      */
     public function isSafeQuery($query, &$response)
     {
         $response = '';
-        $temp= explode(' ', strtoupper($query));
+        $temp = explode(' ', strtoupper($query));
 
         if (!count(array_intersect(['USERS'], $temp)) > 0) {
             $response = 'query does not contain [from users] statement';
+
             return false;
         }
 
         if (!count(array_intersect(['SELECT'], $temp)) > 0) {
             $response = 'query does not contain [select bla bla] statement';
+
             return false;
         }
 
         //all other sql
         if (count(array_intersect($this->notAllowedCommands, $temp)) > 0) {
-            $response = "Query contains bad statements [".implode(",", $this->notAllowedCommands)."]!";
+            $response = 'Query contains bad statements ['.implode(',', $this->notAllowedCommands).']!';
+
             return false;
         } else {
             return true;
@@ -87,8 +92,10 @@ class UsersToCsvCommand extends Command
      * @param $filename
      * @param $data
      * @param bool $exception
-     * @return bool
+     *
      * @throws \Exception
+     *
+     * @return bool
      */
     public function writeToCsv($filename, $data, $exception = false)
     {
@@ -96,12 +103,12 @@ class UsersToCsvCommand extends Command
             return false;
         }
 
-        if (!ini_get("auto_detect_line_endings")) {
-            ini_set("auto_detect_line_endings", '1');
+        if (!ini_get('auto_detect_line_endings')) {
+            ini_set('auto_detect_line_endings', '1');
         }
 
         try {
-            $csv = Writer::createFromPath($filename, "w");
+            $csv = Writer::createFromPath($filename, 'w');
             $csv->setOutputBOM(Reader::BOM_UTF8);
             $csv->setDelimiter(';');
 
@@ -110,7 +117,7 @@ class UsersToCsvCommand extends Command
 
             //test exception
             if ($exception) {
-                $i = 6/0;
+                $i = 6 / 0;
             }
 
             // insert data into the CSV
@@ -130,21 +137,24 @@ class UsersToCsvCommand extends Command
     /**
      * @param $conn
      * @param $data
+     *
      * @throws \Exception
      */
     public function deleteData($conn, $data)
     {
         $conn->beginTransaction();
+
         try {
-            $stmt = $conn->prepare("delete from users where id = :id");
+            $stmt = $conn->prepare('delete from users where id = :id');
             foreach ($data as $row) {
-                $stmt->bindParam(':id', $row["id"], PDO::PARAM_STR);
+                $stmt->bindParam(':id', $row['id'], PDO::PARAM_STR);
                 $stmt->execute();
             }
             $conn->commit();
         } catch (\Exception $e) {
             // Something went wrong rollback
             $conn->rollback();
+
             throw $e;
         }
     }
@@ -152,7 +162,7 @@ class UsersToCsvCommand extends Command
     protected function configure()
     {
         $this
-            ->setName("users")
+            ->setName('users')
             ->setDescription("run SQL query and store result to file in csv format. Example #php app users 'select * from users' users.csv")
             ->addArgument('input', InputArgument::REQUIRED, 'Input query.')
             ->addArgument('output', InputArgument::REQUIRED, 'Output CSV file.');
@@ -160,12 +170,12 @@ class UsersToCsvCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $inQuery  = $input->getArgument('input');
+        $inQuery = $input->getArgument('input');
         $outfile = $input->getArgument('output');
 
         $file_parts = pathinfo($outfile);
-        if ($file_parts["extension"] != "csv") {
-            throw new \Exception("Filename extension is not correct etc. users.csv");
+        if ($file_parts['extension'] != 'csv') {
+            throw new \Exception('Filename extension is not correct etc. users.csv');
         }
 
         $safeResponse = '';
@@ -184,8 +194,8 @@ class UsersToCsvCommand extends Command
 
             // Verify that uniq "id" column is included, this is not done in isSafeQuery in case of join and more complex query
             // What is expected to be a complete dump?
-            if ((count($rows) > 0) && !array_key_exists("id", $rows[0])) {
-                throw new \Exception("Column \"id\" must be selected in query.");
+            if ((count($rows) > 0) && !array_key_exists('id', $rows[0])) {
+                throw new \Exception('Column "id" must be selected in query.');
             }
 
             if ($this->writeToCsv($outfile, $rows)) {
